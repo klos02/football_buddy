@@ -13,6 +13,13 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
+  late final MapController _mapController;
+  @override
+  void initState() {
+    super.initState();
+    _mapController = MapController();
+  }
+
   @override
   Widget build(BuildContext context) {
     final locationProvider = Provider.of<LocationProvider>(context);
@@ -24,7 +31,7 @@ class _MapScreenState extends State<MapScreen> {
           userLocation == null
               ? const Center(child: CircularProgressIndicator())
               : FlutterMap(
-                mapController: MapController(),
+                mapController: _mapController,
                 options: MapOptions(
                   interactionOptions: const InteractionOptions(
                     flags: InteractiveFlag.all,
@@ -56,6 +63,12 @@ class _MapScreenState extends State<MapScreen> {
                   ),
                 ],
               ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _mapController.move(userLocation!, 16);
+        },
+        child: const Icon(Icons.my_location),
+      ),
     );
   }
 }

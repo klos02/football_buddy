@@ -61,7 +61,16 @@ class LoginScreen extends StatelessWidget {
               ),
               SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
+                  try{
+                    await auth.signIn(emailController.text, passwordController.text);
+                  } on Exception catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(e.toString().replaceFirst('Exception: ', '')),
+                      ),
+                    );
+                  }
                   auth.signIn(emailController.text, passwordController.text);
                 },
                 style: ElevatedButton.styleFrom(
