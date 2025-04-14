@@ -9,4 +9,6 @@ class NavigationProvider with ChangeNotifier {
     _currentIndex = index;
     notifyListeners();
   }
+
+  
 }
