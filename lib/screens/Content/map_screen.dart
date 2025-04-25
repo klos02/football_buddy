@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:football_buddy/widgets/add_location_sheet.dart';
 //import 'package:flutter_map_marker_layer/flutter_map_marker_layer.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
@@ -77,7 +78,22 @@ class _MapScreenState extends State<MapScreen> {
           ),
           const SizedBox(height: 10),
           FloatingActionButton(
-            onPressed: () {},
+            onPressed: () {
+              final location = context.read<LocationProvider>();
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                ),
+                builder: (context) {
+                  return AddLocationSheet(
+                    lat: userLocation!.latitude,
+                    lng: userLocation!.longitude,
+                  );
+                },
+              );
+            },
             heroTag: 'add',
             child: const Icon(Icons.add),
           ),
