@@ -15,8 +15,5 @@ class FirestoreService {
     });
   }
 
-  Future<List<Map<String, dynamic>>> getLocations() async {
-    final snapshot = await _locations.orderBy('timestamp', descending: true).get();
-    return snapshot.docs.map((doc) => doc.data()).toList();
-  }
+  
 }
