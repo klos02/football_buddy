@@ -27,7 +27,7 @@ class NearbyPointsProvider with ChangeNotifier {
     return distance <= radius;
   }
 
-  Future<void> fetchWithingBounds(LatLngBounds bounds) async {
+  Future<void> fetchWithinBounds(LatLngBounds bounds) async {
     final minLat = bounds.south;
     final maxLat = bounds.north;
     final minLng = bounds.west;

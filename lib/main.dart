@@ -2,7 +2,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:football_buddy/providers/auth_navigation_provider.dart';
 import 'package:football_buddy/providers/auth_provider.dart';
+import 'package:football_buddy/providers/location_form_provider.dart';
 import 'package:football_buddy/providers/navigation_provider.dart';
+import 'package:football_buddy/providers/nearby_points_provider.dart';
 import 'package:football_buddy/widget_tree.dart';
 import 'package:provider/provider.dart';
 import 'providers/location_provider.dart';
@@ -21,6 +23,8 @@ void main() async {
         ChangeNotifierProvider(create: (_) => NavigationProvider()),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => AuthNavigationProvider()),
+        ChangeNotifierProvider(create: (_) => LocationFormProvider()),
+        ChangeNotifierProvider(create: (_) => NearbyPointsProvider()),
       ],
       child: const MyApp(),
     ),
