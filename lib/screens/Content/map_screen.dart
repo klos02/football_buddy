@@ -63,11 +63,25 @@ class _MapScreenState extends State<MapScreen> {
                   ),
                 ],
               ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _mapController.move(userLocation!, 16);
-        },
-        child: const Icon(Icons.my_location),
+      //floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            mini: true,
+            heroTag: 'locate',
+            onPressed: () {
+              _mapController.move(userLocation!, 16);
+            },
+            child: const Icon(Icons.my_location),
+          ),
+          const SizedBox(height: 10),
+          FloatingActionButton(
+            onPressed: () {},
+            heroTag: 'add',
+            child: const Icon(Icons.add),
+          ),
+        ],
       ),
     );
   }
