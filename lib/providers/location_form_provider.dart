@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -16,8 +17,8 @@ class LocationFormProvider with ChangeNotifier {
       try {
         await _firestoreService.addLocation(
           name: nameController.text,
-          latitude: lat,
-          longitude: lng,
+          location: GeoPoint(lat, lng),
+          
         );
         Navigator.of(context).pop(); 
       } on FirebaseException catch (e) {
