@@ -15,33 +15,24 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
-  final _mapController = MapController();
+  late MapController _mapController;
+  
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final pointsProvider = context.read<NearbyPointsProvider>();
-      final locationProvider = context.read<LocationProvider>();
-      final location = await locationProvider.currentLocation!;
-      await pointsProvider.fetchNearbyPoints(location);
-
-      _mapController.mapEventStream.listen((event) {
-        if (event is MapEventMove) {
-          final bounds = _mapController.camera.visibleBounds;
-          if (bounds != null) {
-            pointsProvider.fetchWithinBounds(bounds);
-          }
-        }
-      });
-      
-      
-    });
+    
+    _mapController = MapController();
   }
 
   @override
   Widget build(BuildContext context) {
     final locationProvider = Provider.of<LocationProvider>(context);
     final userLocation = locationProvider.currentLocation;
+    final nearbyPointsProvider = Provider.of<NearbyPointsProvider>(context);
+
+    if (userLocation != null) {
+      nearbyPointsProvider.fetchNearbyPoints(userLocation);
+    }
 
     return Scaffold(
       appBar: AppBar(title: const Text('Football Buddy')),
@@ -66,15 +57,22 @@ class _MapScreenState extends State<MapScreen> {
                     retinaMode: RetinaMode.isHighDensity(context),
                   ),
                   MarkerLayer(
-                    markers: context
-                        .watch<NearbyPointsProvider>()
-                        .withinBoundsPoints.map((point){
-                          final pos = point['location'];
-                          return Marker(
-                            point: LatLng(pos.latitude, pos.longitude),
-                            child: const Icon(Icons.sports_soccer_outlined, color: Colors.green, size: 30),
-                          );
-                        }).toList(), 
+                    markers:
+                        context
+                            .watch<NearbyPointsProvider>()
+                            .nearbyPoints
+                            .map((point) {
+                              final pos = point['location'];
+                              return Marker(
+                                point: LatLng(pos.latitude, pos.longitude),
+                                child: const Icon(
+                                  Icons.sports_soccer_outlined,
+                                  color: Colors.green,
+                                  size: 30,
+                                ),
+                              );
+                            })
+                            .toList(),
                   ),
                 ],
               ),

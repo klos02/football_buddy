@@ -1,46 +1,26 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 
 class NearbyPointsProvider with ChangeNotifier {
   final _collection = FirebaseFirestore.instance.collection('locations');
   List<Map<String, dynamic>> _nearbyPoints = [];
-  List<Map<String, dynamic>> _withinBoundsPoints = [];
-  List<Map<String, dynamic>> get nearbyPoints => _nearbyPoints;
-  List<Map<String, dynamic>> get withinBoundsPoints => _withinBoundsPoints;
 
+  List<Map<String, dynamic>> get nearbyPoints => _nearbyPoints;
 
   Future<void> fetchNearbyPoints(LatLng currentLocation) async {
-    final snapshot = await _collection.get();
-    final allPoints = snapshot.docs.map((doc) => doc.data()).toList();
+    final radius = 0.1;
+    final userLat = currentLocation.latitude;
+    final userLng = currentLocation.longitude;
 
-    _nearbyPoints = allPoints.where((point) {
-      final pointLocation = LatLng(point['location'].latitude, point['location'].longitude);
-      return _isWithinRadius(currentLocation, pointLocation, 5000); // 5 km radius
-    }).toList();
-
-    notifyListeners();
-  }
-  bool _isWithinRadius(LatLng point1, LatLng point2, double radius) {
-    final distance = Distance().as(LengthUnit.Meter, point1, point2);
-    return distance <= radius;
-  }
-
-  Future<void> fetchWithinBounds(LatLngBounds bounds) async {
-    final minLat = bounds.south;
-    final maxLat = bounds.north;
-    final minLng = bounds.west;
-    final maxLng = bounds.east;
-
-    _withinBoundsPoints = _nearbyPoints.where((point) {
-      final pointLocation = LatLng(point['location'].latitude, point['location'].longitude);
-      return pointLocation.latitude >= minLat &&
-             pointLocation.latitude <= maxLat &&
-             pointLocation.longitude >= minLng &&
-             pointLocation.longitude <= maxLng;
-    }).toList();
+    _collection
+        .where('location', isGreaterThanOrEqualTo: GeoPoint(userLat - radius, userLng - radius))
+        .where('location', isLessThanOrEqualTo: GeoPoint(userLat + radius, userLng + radius))
+        .snapshots()
+        .listen((snapshot) {
+          _nearbyPoints = snapshot.docs.map((doc) => doc.data()).toList();
+          notifyListeners();
+        });
   }
 
-  
 }
