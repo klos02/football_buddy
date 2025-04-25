@@ -5,13 +5,12 @@ class FirestoreService {
 
   Future<void> addLocation({
     required String name,
-    required double latitude,
-    required double longitude,
+    required GeoPoint location,
+    
   }) async {
     await _locations.add({
       'name': name,
-      'latitude': latitude,
-      'longitude': longitude,
+      'location': location,
       'timestamp': FieldValue.serverTimestamp(),
     });
   }
