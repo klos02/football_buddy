@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:football_buddy/providers/nearby_points_provider.dart';
 import 'package:football_buddy/widgets/add_location_sheet.dart';
 //import 'package:flutter_map_marker_layer/flutter_map_marker_layer.dart';
 import 'package:latlong2/latlong.dart';
@@ -14,11 +15,27 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
-  late final MapController _mapController;
+  final _mapController = MapController();
   @override
   void initState() {
     super.initState();
-    _mapController = MapController();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final pointsProvider = context.read<NearbyPointsProvider>();
+      final locationProvider = context.read<LocationProvider>();
+      final location = await locationProvider.currentLocation!;
+      await pointsProvider.fetchNearbyPoints(location);
+
+      _mapController.mapEventStream.listen((event) {
+        if (event is MapEventMove) {
+          final bounds = _mapController.camera.visibleBounds;
+          if (bounds != null) {
+            pointsProvider.fetchWithinBounds(bounds);
+          }
+        }
+      });
+      
+      
+    });
   }
 
   @override
@@ -49,18 +66,15 @@ class _MapScreenState extends State<MapScreen> {
                     retinaMode: RetinaMode.isHighDensity(context),
                   ),
                   MarkerLayer(
-                    markers: [
-                      Marker(
-                        point: userLocation,
-                        width: 40,
-                        height: 40,
-                        child: const Icon(
-                          Icons.location_pin,
-                          color: Colors.red,
-                          size: 40,
-                        ),
-                      ),
-                    ],
+                    markers: context
+                        .watch<NearbyPointsProvider>()
+                        .withinBoundsPoints.map((point){
+                          final pos = point['location'];
+                          return Marker(
+                            point: LatLng(pos.latitude, pos.longitude),
+                            child: const Icon(Icons.sports_soccer_outlined, color: Colors.green, size: 30),
+                          );
+                        }).toList(), 
                   ),
                 ],
               ),
