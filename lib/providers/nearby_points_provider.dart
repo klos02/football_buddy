@@ -5,6 +5,7 @@ import 'package:latlong2/latlong.dart';
 class NearbyPointsProvider with ChangeNotifier {
   final _collection = FirebaseFirestore.instance.collection('locations');
   List<Map<String, dynamic>> _nearbyPoints = [];
+  
 
   List<Map<String, dynamic>> get nearbyPoints => _nearbyPoints;
 
@@ -18,9 +19,15 @@ class NearbyPointsProvider with ChangeNotifier {
         .where('location', isLessThanOrEqualTo: GeoPoint(userLat + radius, userLng + radius))
         .snapshots()
         .listen((snapshot) {
-          _nearbyPoints = snapshot.docs.map((doc) => doc.data()).toList();
+          _nearbyPoints = snapshot.docs.map((doc) => doc.data()).toList(); 
           notifyListeners();
         });
+        
   }
+
+  int getNearbyPointsCount() {
+    return _nearbyPoints.length;
+  }
+
 
 }

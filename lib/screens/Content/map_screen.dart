@@ -16,11 +16,11 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
   late MapController _mapController;
-  
+
   @override
   void initState() {
     super.initState();
-    
+
     _mapController = MapController();
   }
 
@@ -36,7 +36,8 @@ class _MapScreenState extends State<MapScreen> {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Football Buddy')),
-      body:
+      body: Stack(
+        children: [
           userLocation == null
               ? const Center(child: CircularProgressIndicator())
               : FlutterMap(
@@ -58,24 +59,44 @@ class _MapScreenState extends State<MapScreen> {
                   ),
                   MarkerLayer(
                     markers:
-                        context
-                            .watch<NearbyPointsProvider>()
-                            .nearbyPoints
-                            .map((point) {
-                              final pos = point['location'];
-                              return Marker(
-                                point: LatLng(pos.latitude, pos.longitude),
-                                child: const Icon(
-                                  Icons.sports_soccer_outlined,
-                                  color: Colors.green,
-                                  size: 30,
-                                ),
-                              );
-                            })
-                            .toList(),
+                        context.watch<NearbyPointsProvider>().nearbyPoints.map((
+                          point,
+                        ) {
+                          final pos = point['location'];
+                          return Marker(
+                            point: LatLng(pos.latitude, pos.longitude),
+                            child: const Icon(
+                              Icons.sports_soccer_outlined,
+                              color: Colors.green,
+                              size: 30,
+                            ),
+                          );
+                        }).toList(),
                   ),
                 ],
               ),
+          Positioned(
+            top: 20,
+            left: 20,
+            //right: 20, 
+            child: Card(
+              elevation: 5,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(8),
+                child: Row(children: [
+                  Icon(Icons.sports_soccer_outlined, color: Colors.green, size: 30),
+                  const SizedBox(width: 10),
+                  Text(nearbyPointsProvider.getNearbyPointsCount().toString(), style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                ],)
+              ),
+            )
+          ),
+        ],
+      ),
+
       //floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
