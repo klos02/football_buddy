@@ -18,9 +18,14 @@ class BottomNav extends StatelessWidget {
           label: 'Mapa',
         ),
         BottomNavigationBarItem(
+          icon: Icon(Icons.list),
+          label: 'Lista',
+        ),
+        BottomNavigationBarItem(
           icon: Icon(Icons.info),
           label: 'Info',
         ),
+
       ],
     );
   }
