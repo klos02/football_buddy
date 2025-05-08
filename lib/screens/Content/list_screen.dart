@@ -21,7 +21,8 @@ class _ListScreenState extends State<ListScreen> {
                 itemCount: nearbyPointsProvider.getNearbyPointsCount(),
                 itemBuilder: (context, index) {
                   final point = nearbyPointsProvider.nearbyPoints[index];
-                  return ListTile(title: Text(point['name']));
+                  return ListTile(title: Text(point['name']),
+                  subtitle: Text(point['timestamp'].toString()),);
                 },
               ),
     );
