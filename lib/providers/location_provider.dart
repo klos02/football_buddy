@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
@@ -31,5 +32,14 @@ class LocationProvider with ChangeNotifier {
       _currentLocation = LatLng(pos.latitude, pos.longitude);
       notifyListeners();
     });
+  }
+
+  double calculateDistance(LatLng point1, GeoPoint point2) {
+    return Geolocator.distanceBetween(
+      point1.latitude,
+      point1.longitude,
+      point2.latitude,
+      point2.longitude,
+    );
   }
 }
